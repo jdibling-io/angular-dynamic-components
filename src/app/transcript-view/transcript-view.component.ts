@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { MessengerService } from '../messenger.service';
 import { Transcript } from '../transcript.service';
 
 @Component({
@@ -8,19 +9,14 @@ import { Transcript } from '../transcript.service';
 })
 export class TranscriptViewComponent implements OnInit {
   @Input() transcript: Transcript;
-  constructor() { }
+  constructor(private messegerSvc: MessengerService) { }
 
-  ngOnInit(): void {
+  ngOnInit(): void {  }
+  OnSelectAll() {
+    this.messegerSvc.ToggleSelection(true);
   }
-
-  OnEnter() {
-    console.log("child enter");
-  }
-  OnLeave() {
-    console.log("child leave");
+  OnSelectNone() {
+    this.messegerSvc.ToggleSelection(false);
   }
 
-  OnBlur() {
-    console.log("child blur");
-  }
 }

@@ -1,4 +1,5 @@
 import { Component, HostListener, Input, OnInit } from '@angular/core';
+import { MessengerService } from '../messenger.service';
 import { TranscriptSpeakerBlock } from '../transcript.service';
 
 @Component({
@@ -11,7 +12,6 @@ export class SpeakerBlockViewComponent implements OnInit {
   IsSelected: boolean = false;
 
   @Input() block: TranscriptSpeakerBlock;
-  constructor() { }
   @HostListener('mouseenter') mouseover(event: Event) {
     console.log("mouseenter");
     this.IsFocused = true;
@@ -23,8 +23,12 @@ export class SpeakerBlockViewComponent implements OnInit {
   @HostListener('click') click(event: Event) {
     this.IsSelected = !this.IsSelected;
   }
+  
+  constructor(private messengerSvc: MessengerService) { }
 
-  ngOnInit(): void {  }
+  ngOnInit(): void {  
+    this.messengerSvc.SelectionChange$.subscribe(state => this.IsSelected = state);
+  }
 
   get TranscriptText(): string {
     return this.block.Items.map(item => item.Content).join(' ');
