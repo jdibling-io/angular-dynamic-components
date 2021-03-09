@@ -1,5 +1,5 @@
 <h1>Transcript</h1>
 
 <ng-container *ngFor="let block of transcript.SpeakerBlocks">
-    <app-speaker-block-view [block]="block"></app-speaker-block-view>
+    <app-speaker-block-view [block]="block" (mouseenter)="OnEnter()" (mouseleave)="OnLeave()" (blur)="OnBlur()"></app-speaker-block-view>
 </ng-container>

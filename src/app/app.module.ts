@@ -4,7 +4,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppComponent } from './app.component';
 import { SpeakerBlockViewComponent } from './speaker-block-view/speaker-block-view.component';
 import { TranscriptViewComponent } from './transcript-view/transcript-view.component';
-import { SpeakerBlockContentViewComponent } from './speaker-block-content-view/speaker-block-content-view.component';
+import { TranscriptItemViewComponent } from './transcript-item-view/transcript-item-view.component';
 
 
 @NgModule({
@@ -12,7 +12,7 @@ import { SpeakerBlockContentViewComponent } from './speaker-block-content-view/s
     AppComponent,
     TranscriptViewComponent,
     SpeakerBlockViewComponent,
-    SpeakerBlockContentViewComponent,
+    TranscriptItemViewComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,6 +1,28 @@
 <div class="block-wrapper">
-    <div class="header">
-        Speaker {{block.Speaker}}
+    <div class="header d-flex flex-row justify-content-between" [class.selected]="IsSelected" [class.focused]="IsFocused">
+        <div>Speaker {{block.Speaker}}</div>
+        <div>Selected: {{IsSelected}}</div>
+        <div>Focus: {{IsFocused}}</div>
+        <div>Expanded: {{IsExpanded}}</div>
     </div>
-    <app-speaker-block-content-view [items]="block.Items"></app-speaker-block-content-view>
+
+    <div class="content">
+        <ng-container [ngSwitch]="IsExpanded">
+            <ng-container *ngSwitchCase="false">
+                <ng-container *ngTemplateOutlet="tplCollapsed"></ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="true">
+                <ng-container *ngTemplateOutlet="tplExpanded"></ng-container>
+            </ng-container>
+        </ng-container>
+    </div>
 </div>
+
+
+<ng-template #tplCollapsed>
+    <span>{{TranscriptText}}</span>
+</ng-template>
+
+<ng-template #tplExpanded>
+    <app-transcript-item-view *ngFor="let item of block.Items" [item]="item"></app-transcript-item-view>
+</ng-template>

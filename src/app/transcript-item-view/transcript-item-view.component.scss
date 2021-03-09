@@ -1,0 +1,6 @@
+.item {
+  &::after {
+    content: " ";
+  }
+  text-decoration: underline skyblue wavy;
+}

@@ -13,4 +13,14 @@ export class TranscriptViewComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  OnEnter() {
+    console.log("child enter");
+  }
+  OnLeave() {
+    console.log("child leave");
+  }
+
+  OnBlur() {
+    console.log("child blur");
+  }
 }
