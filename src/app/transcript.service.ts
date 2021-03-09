@@ -30,15 +30,21 @@ export class TranscriptService {
 
     let retval: Transcript = new Transcript();
     let curSpeaker = 1;
+    let totalWordCount = 0;
     let curStart = 0; // we will simply increment curStart by 500 for each word
-    for (let idx = 0; idx < 5; idx++) {
+    // keep adding speaker block until we have at least 15k words
+    for (; totalWordCount < 15000; ) {
       // here is a new speaker block
       let speakerBlock = new TranscriptSpeakerBlock(curSpeaker);
-      // fill it in with words
-      loremParts.forEach(part => {
-        speakerBlock.Items.push(new TranscriptItem(part, curStart, curStart+500));
-        curStart += 500;
-      })
+
+      // fill it in with 1-5 copies of the lorem text
+      for (let idx = 0; idx < this.getRandomInt(4)+1; idx++) {
+        loremParts.forEach(part => {
+          speakerBlock.Items.push(new TranscriptItem(part, curStart, curStart+500));
+          curStart += 500;
+        })
+        totalWordCount += loremParts.length;
+      }
       // flip the speaker ID between 1 and 2 for the next speaker block
       curSpeaker = (curSpeaker==1) ? 2 : 1;
       retval.SpeakerBlocks.push(speakerBlock);
@@ -47,5 +53,9 @@ export class TranscriptService {
     console.log('Returning: ', retval);
 
     return retval;
+  }
+
+  private getRandomInt(max): number {
+    return Math.floor(Math.random() * Math.floor(max));
   }
 }
