@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Transcript, TranscriptService } from './transcript.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +9,7 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'dynamic';
+
+  constructor(private transcriptSvc: TranscriptService) {}
+  Transcript$: Observable<Transcript> = this.transcriptSvc.Transcript$;
 }
