@@ -1,9 +1,11 @@
 import { Component, ElementRef, HostListener, Input, OnInit } from '@angular/core';
-import { fromEvent } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { fromEvent, merge, of } from 'rxjs';
+import { delay, map, switchMap } from 'rxjs/operators';
 import { BlockStatus, MessengerService } from '../messenger.service';
 import { TranscriptSpeakerBlock } from '../transcript.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-speaker-block-view',
   templateUrl: './speaker-block-view.component.html',
@@ -20,29 +22,33 @@ export class SpeakerBlockViewComponent implements OnInit {
 
   @Input() block: TranscriptSpeakerBlock;
 
-  mouseleave$ = fromEvent(this.element.nativeElement, 'mouseleave');
-  mouseenter$ = fromEvent(this.element.nativeElement, 'mouseenter');
-  
-  // @HostListener('mouseenter') mouseover(event: Event) {
-  //   this.SetFocused(true);
-  // }
-  // @HostListener('mouseleave') mouseleave(event: Event) {
-  //   this.SetFocused(false);
-  // }
   @HostListener('click') click(event: Event) {
     this.SetSelected(!this.IsSelected);
   }
-  
-  
+    
   constructor(private messengerSvc: MessengerService, private readonly element: ElementRef) { }
 
+  delay = 500;
   ngOnInit(): void {  
+    
     this.messengerSvc.SetBlockState(this.block.BlockId, new BlockStatus(this.block.BlockId, false, false, false))
-    this.mouseenter$.pipe(
-      debounceTime(400), // 400 ms delay
-      takeUntil(this.mouseleave$),
-    ).subscribe((_) => this.SetFocused(true));
-    this.mouseleave$.subscribe((_) => this.SetFocused(false));
+
+    const enter$ = fromEvent(this.element.nativeElement, 'mouseenter').pipe(map(_ => true));
+    const leave$ = fromEvent(this.element.nativeElement, 'mouseleave').pipe(map(_ => false));
+   
+    merge(leave$, enter$).pipe(
+      untilDestroyed(this),
+      switchMap(show => {
+        if (!show) {
+          return of(false);
+        }
+        return of(true).pipe(delay(this.delay))
+      }
+    )
+  ).subscribe(show => {
+    console.log(Date.now(), " block id ", this.block.BlockId, "show: ", show);
+    this.SetFocused(show);
+  });
   }
 
   get TranscriptText(): string {
