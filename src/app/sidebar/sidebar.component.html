@@ -5,9 +5,24 @@
         <div class="col-4">Focusing: {{NumFocusing}}</div>
         <div class="col-4">Selected: {{NumSelected}}</div>
     </div>
-    <div class="row">
+    <div class="row data-pane">
         <div class="col-12">
-            <pre>{{blocks|json}}</pre>
+            <table class="table table-dark">
+                <thead>
+                    <th scope="col">#</th>
+                    <th scope="col">Selected</th>
+                    <th scope="col">Focued</th>
+                    <th scope="col">Focusing</th>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let block of blocks">
+                        <th scope="row">{{block.BlockId}}</th>
+                        <th>{{block.Selected == true? "TRUE" : ""}}</th>
+                        <th>{{block.Focused == true ? "TRUE" : ""}}</th>
+                        <th>{{block.Focusing == true? "TRUE" : ""}}</th>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
