@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
+import { BlockStatus, MessengerService } from './messenger.service';
 import { Transcript, TranscriptService } from './transcript.service';
 
 @Component({
@@ -10,6 +11,7 @@ import { Transcript, TranscriptService } from './transcript.service';
 export class AppComponent {
   title = 'dynamic';
 
-  constructor(private transcriptSvc: TranscriptService) {}
+  constructor(private transcriptSvc: TranscriptService, private messengerSvc: MessengerService) {}
   Transcript$: Observable<Transcript> = this.transcriptSvc.Transcript$;
+  Blocks$: Observable<BlockStatus[]> = this.messengerSvc.Blocks$;
 }

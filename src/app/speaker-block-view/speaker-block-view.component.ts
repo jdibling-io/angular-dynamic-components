@@ -1,5 +1,5 @@
 import { Component, HostListener, Input, OnInit } from '@angular/core';
-import { MessengerService } from '../messenger.service';
+import { BlockStatus, MessengerService } from '../messenger.service';
 import { TranscriptSpeakerBlock } from '../transcript.service';
 
 @Component({
@@ -8,26 +8,29 @@ import { TranscriptSpeakerBlock } from '../transcript.service';
   styleUrls: ['./speaker-block-view.component.scss']
 })
 export class SpeakerBlockViewComponent implements OnInit {
-  IsFocused: boolean = false;
-  IsSelected: boolean = false;
+  private isFocused: boolean = false;
+  private isSelected: boolean = false;
+
+  get IsFocused(): boolean { return this.isFocused; }
+  SetFocused(st: boolean) { this.isFocused = st; this.messengerSvc.SetBlockState(this.block.BlockId, {Focused: st}) }
+  get IsSelected(): boolean { return this.isSelected; }
+  SetSelected(st: boolean) { this.isSelected = st; }
 
   @Input() block: TranscriptSpeakerBlock;
   @HostListener('mouseenter') mouseover(event: Event) {
-    console.log("mouseenter");
-    this.IsFocused = true;
+    this.SetFocused(true);
   }
   @HostListener('mouseleave') mouseleave(event: Event) {
-    console.log("mouseleave");
-    this.IsFocused = false;
+    this.SetFocused(false);
   }
   @HostListener('click') click(event: Event) {
-    this.IsSelected = !this.IsSelected;
+    this.SetSelected(!this.IsSelected);
   }
   
   constructor(private messengerSvc: MessengerService) { }
 
   ngOnInit(): void {  
-    this.messengerSvc.SelectionChange$.subscribe(state => this.IsSelected = state);
+    this.messengerSvc.SetBlockState(this.block.BlockId, new BlockStatus(this.block.BlockId, false, false, false))
   }
 
   get TranscriptText(): string {

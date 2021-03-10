@@ -6,7 +6,7 @@ export class TranscriptItem {
 }
 
 export class TranscriptSpeakerBlock {
-  constructor(public Speaker: number) { this.Items = [];}
+  constructor(public BlockId: number, public Speaker: number) { this.Items = [];}
   Items: TranscriptItem[];
 }
 
@@ -30,12 +30,13 @@ export class TranscriptService {
 
     let retval: Transcript = new Transcript();
     let curSpeaker = 1;
+    let curBlockId = 1;
     let totalWordCount = 0;
     let curStart = 0; // we will simply increment curStart by 500 for each word
     // keep adding speaker block until we have at least 15k words
     for (; totalWordCount < 15000; ) {
       // here is a new speaker block
-      let speakerBlock = new TranscriptSpeakerBlock(curSpeaker);
+      let speakerBlock = new TranscriptSpeakerBlock(curBlockId++, curSpeaker);
 
       // fill it in with 1-5 copies of the lorem text
       for (let idx = 0; idx < this.getRandomInt(4)+1; idx++) {

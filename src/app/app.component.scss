@@ -1,10 +1,8 @@
-.wrapper {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-
-  .lorem {
-    display: flex;
-    border: 1px solid grey;
-  }
+.content {
+  display: block;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar {
+  display: block;
 }

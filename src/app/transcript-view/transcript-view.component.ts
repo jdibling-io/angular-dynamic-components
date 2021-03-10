@@ -13,10 +13,8 @@ export class TranscriptViewComponent implements OnInit {
 
   ngOnInit(): void {  }
   OnSelectAll() {
-    this.messegerSvc.ToggleSelection(true);
   }
   OnSelectNone() {
-    this.messegerSvc.ToggleSelection(false);
   }
 
 }
