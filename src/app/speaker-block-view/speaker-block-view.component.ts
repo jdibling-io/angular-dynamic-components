@@ -1,4 +1,6 @@
-import { Component, HostListener, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit } from '@angular/core';
+import { fromEvent } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 import { BlockStatus, MessengerService } from '../messenger.service';
 import { TranscriptSpeakerBlock } from '../transcript.service';
 
@@ -17,20 +19,30 @@ export class SpeakerBlockViewComponent implements OnInit {
   SetSelected(st: boolean) { this.isSelected = st; }
 
   @Input() block: TranscriptSpeakerBlock;
-  @HostListener('mouseenter') mouseover(event: Event) {
-    this.SetFocused(true);
-  }
-  @HostListener('mouseleave') mouseleave(event: Event) {
-    this.SetFocused(false);
-  }
+
+  mouseleave$ = fromEvent(this.element.nativeElement, 'mouseleave');
+  mouseenter$ = fromEvent(this.element.nativeElement, 'mouseenter');
+  
+  // @HostListener('mouseenter') mouseover(event: Event) {
+  //   this.SetFocused(true);
+  // }
+  // @HostListener('mouseleave') mouseleave(event: Event) {
+  //   this.SetFocused(false);
+  // }
   @HostListener('click') click(event: Event) {
     this.SetSelected(!this.IsSelected);
   }
   
-  constructor(private messengerSvc: MessengerService) { }
+  
+  constructor(private messengerSvc: MessengerService, private readonly element: ElementRef) { }
 
   ngOnInit(): void {  
     this.messengerSvc.SetBlockState(this.block.BlockId, new BlockStatus(this.block.BlockId, false, false, false))
+    this.mouseenter$.pipe(
+      debounceTime(400), // 400 ms delay
+      takeUntil(this.mouseleave$),
+    ).subscribe((_) => this.SetFocused(true));
+    this.mouseleave$.subscribe((_) => this.SetFocused(false));
   }
 
   get TranscriptText(): string {
