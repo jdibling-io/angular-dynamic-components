@@ -1,7 +1,7 @@
 import { Component, ElementRef, HostListener, Input, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { fromEvent, merge, of } from 'rxjs';
-import { delay, map, switchMap } from 'rxjs/operators';
+import { delay, map, switchMap, tap } from 'rxjs/operators';
 import { BlockStatus, MessengerService } from '../messenger.service';
 import { TranscriptSpeakerBlock } from '../transcript.service';
 
@@ -18,7 +18,10 @@ export class SpeakerBlockViewComponent implements OnInit {
   get IsFocused(): boolean { return this.isFocused; }
   SetFocused(st: boolean) { this.isFocused = st; this.messengerSvc.SetBlockState(this.block.BlockId, {Focused: st}) }
   get IsSelected(): boolean { return this.isSelected; }
-  SetSelected(st: boolean) { this.isSelected = st; }
+  SetSelected(st: boolean) { 
+    this.isSelected = st; 
+    this.messengerSvc.SetBlockState(this.block.BlockId, {Selected: st});
+  }
 
   @Input() block: TranscriptSpeakerBlock;
 
@@ -33,8 +36,14 @@ export class SpeakerBlockViewComponent implements OnInit {
     
     this.messengerSvc.SetBlockState(this.block.BlockId, new BlockStatus(this.block.BlockId, false, false, false))
 
-    const enter$ = fromEvent(this.element.nativeElement, 'mouseenter').pipe(map(_ => true));
-    const leave$ = fromEvent(this.element.nativeElement, 'mouseleave').pipe(map(_ => false));
+    const enter$ = fromEvent(this.element.nativeElement, 'mouseenter').pipe(
+      map(_ => true),
+      tap(_ => this.messengerSvc.SetBlockState(this.block.BlockId, {Focusing: true}))
+      );
+    const leave$ = fromEvent(this.element.nativeElement, 'mouseleave').pipe(
+      map(_ => false),
+      tap(_ => this.messengerSvc.SetBlockState(this.block.BlockId, {Focusing: false}))
+    );
    
     merge(leave$, enter$).pipe(
       untilDestroyed(this),
@@ -48,6 +57,7 @@ export class SpeakerBlockViewComponent implements OnInit {
   ).subscribe(show => {
     console.log(Date.now(), " block id ", this.block.BlockId, "show: ", show);
     this.SetFocused(show);
+    this.messengerSvc.SetBlockState(this.block.BlockId, {Focusing: false})
   });
   }
 
